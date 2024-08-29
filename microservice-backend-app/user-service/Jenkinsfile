@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    environment {
+        // Define environment variables if needed
+        MAVEN_HOME = tool name: 'Maven', type: 'maven'
+        JAVA_HOME = tool name: 'JDK 11', type: 'jdk'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from the repository
+                git branch: 'main', url: 'https://github.com/your-repo/your-java-app.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Use Maven to clean and package the application
+                sh "${MAVEN_HOME}/bin/mvn clean package"
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run unit tests
+                sh "${MAVEN_HOME}/bin/mvn test"
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // Example: Deploy the application to a Tomcat server or similar
+                // This step will vary based on your deployment environment
+                sh 'scp target/your-app.war user@your-server:/path/to/deploy/'
+                // Optional: Restart the server or service
+                sh 'ssh user@your-server "systemctl restart your-app-service"'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment completed successfully.'
+        }
+        failure {
+            echo 'Deployment failed.'
+        }
+    }
+}
