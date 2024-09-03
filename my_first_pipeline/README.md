@@ -4,7 +4,7 @@ A simple jenkins pipeline to verify if the docker slave configuration is working
 
 pipeline {
   agent {
-    docker { image 'node:16-alpine' } #configure the docker
+    docker { image 'node:16-alpine' } #agent for configure the docker
   }
   stages { 
     stage('Test') {
