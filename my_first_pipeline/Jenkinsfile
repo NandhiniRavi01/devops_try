@@ -1,11 +1,11 @@
 pipeline {
   agent {
-    docker { image 'node:16-alpine' }
+    docker { image 'node:16-alpine' } #configure the docker
   }
   stages {
     stage('Test') {
       steps {
-        sh 'node --version'
+        sh 'node --version' #in stages it has the node js or not
       }
     }
   }
