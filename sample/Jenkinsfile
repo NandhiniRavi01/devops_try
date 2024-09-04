@@ -1,26 +1,26 @@
 pipeline {
-    agent any 
-    
+    agent any
+
     environment {
         IMAGE_TAG = "v9"
-        LOCAL_REGISTRY = "localhost:5000"  // Change to your local registry address
+        LOCAL_REGISTRY = "localhost:5000"
     }
-    
+
     stages {
         stage('Checkout') {
-           steps {
+            steps {
                 git credentialsId: 'git-credential', 
                     url: 'https://github.com/NandhiniRavi01/devops_try',
                     branch: 'main'
-           }
+            }
         }
 
         stage('Build Docker') {
             steps {
                 script {
                     sh '''
-                    echo 'Build Docker Image'
-                    docker build -t ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG} .
+                    echo "Building Docker Image"
+                    docker build -t ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG} -f sample/Dockerfile .
                     '''
                 }
             }
@@ -30,26 +30,19 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    echo 'Push Docker Image to Local Registry'
+                    echo "Pushing Docker Image to Local Registry"
                     docker push ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG}
                     '''
                 }
             }
         }
-        
+
         stage('Deploy to Kubernetes using ArgoCD') {
             steps {
                 script {
-                    git credentialsId: 'git-credential', 
-                        url: 'https://github.com/NandhiniRavi01/Manifest.git',
-                        branch: 'main'
-
                     sh '''
-                    echo 'Update Kubernetes manifest and push to GitHub'
-                    sed -i "s|<your-dockerhub-username>/python-app:[^ ]*|${LOCAL_REGISTRY}/python-app:${IMAGE_TAG}|g" deploy.yaml
-                    git add deploy.yaml
-                    git commit -m "Updated image to version ${IMAGE_TAG}"
-                    git push origin main
+                    echo "Deploying to Kubernetes using ArgoCD"
+                    # Add commands to deploy using ArgoCD
                     '''
                 }
             }
