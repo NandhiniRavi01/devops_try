@@ -11,7 +11,7 @@ COPY sample/requirements.txt .
 RUN pip install -r requirements.txt
 
 # Copy the rest of the application code into the container
-COPY . .
+COPY sample/ /app/
 
 # Expose the port the app runs on
 EXPOSE 5000
