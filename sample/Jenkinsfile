@@ -40,8 +40,8 @@ pipeline {
         stage('Deploy to Kubernetes using ArgoCD') {
             steps {
                 script {
-                    git credentialsId: 'your-github-credentials-id', 
-                        url: 'https://github.com/your-username/your-manifests-repo.git',
+                    git credentialsId: 'git-credential', 
+                        url: 'https://github.com/NandhiniRavi01/Manifest.git',
                         branch: 'main'
 
                     sh '''
