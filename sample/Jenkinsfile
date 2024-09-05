@@ -47,31 +47,25 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: "${ARGOCD_CREDENTIALS_ID}", usernameVariable: 'ARGOCD_USERNAME', passwordVariable: 'ARGOCD_PASSWORD')]) {
                         sh '''
-                        echo "Installing ArgoCD CLI"
-                        curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/v2.5.0/argocd-linux-amd64
-                        chmod +x argocd-linux-amd64
-                        mv argocd-linux-amd64 /usr/local/bin/argocd
+                       sh '''
+                    echo "Deploying to Kubernetes using ArgoCD"
+                    # Authenticate with ArgoCD
+                    argocd login ${ARGOCD_SERVER} --username admin --password yHLKjwZPbFr8oamE --insecure
 
-                        echo "Logging in to ArgoCD"
-                        argocd login ${ARGOCD_SERVER} --username ${ARGOCD_USERNAME} --password ${ARGOCD_PASSWORD} --insecure
+                    # Deploy using ArgoCD
+                    argocd app create python-app \
+                        --repo https://github.com/NandhiniRavi01/Manifest \
+                        --path sample \
+                        --dest-server https://kubernetes.default.svc \
+                        --dest-namespace default \
+                        --sync-policy automated
 
-                        echo "Creating or Updating ArgoCD Application"
-                        argocd app create ${ARGOCD_APP_NAME} \
-                            --repo ${REPO_URL} \
-                            --path ${DEPLOYMENT_PATH} \
-                            --dest-server https://kubernetes.default.svc \
-                            --dest-namespace default \
-                            --sync-policy automated
-
-                        echo "Syncing the ArgoCD application"
-                        argocd app sync ${ARGOCD_APP_NAME}
-
-                        echo "Waiting for ArgoCD application to be healthy"
-                        argocd app wait ${ARGOCD_APP_NAME}
-                        '''
+                    argocd app sync python-app
+                    '''
+                
                 }
             }
         }
     }
 }
-}
+
