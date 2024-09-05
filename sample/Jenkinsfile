@@ -5,8 +5,8 @@ pipeline {
         IMAGE_TAG = "v9"
         LOCAL_REGISTRY = "localhost:5000"
         ARGOCD_SERVER = "localhost:8081"
-        
-        ARGOCD_AUTH = "admin:yHLKjwZPbFr8oamE"
+        ARGOCD_USER = "admin"
+        ARGOCD_PASSWORD = "yHLKjwZPbFr8oamE"
     }
 
     stages {
@@ -43,27 +43,16 @@ pipeline {
         stage('Deploy to Kubernetes using ArgoCD') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "${ARGOCD_CREDENTIALS_ID}", usernameVariable: 'ARGOCD_USERNAME', passwordVariable: 'ARGOCD_PASSWORD')]) {
-                        sh '''
-                       sh '''
-                    echo "Deploying to Kubernetes using ArgoCD"
-                    # Authenticate with ArgoCD
-                    argocd login ${ARGOCD_SERVER} --username admin --password yHLKjwZPbFr8oamE --insecure
+                    sh '''
+                    echo "Authenticating with ArgoCD"
+                    argocd login ${ARGOCD_SERVER} --username ${ARGOCD_USER} --password ${ARGOCD_PASSWORD} --insecure
 
-                    # Deploy using ArgoCD
-                    argocd app create python-app \
-                        --repo https://github.com/NandhiniRavi01/Manifest \
-                        --path sample \
-                        --dest-server https://kubernetes.default.svc \
-                        --dest-namespace default \
-                        --sync-policy automated
-
-                    argocd app sync python-app
+                    echo "Deploying to Kubernetes"
+                    argocd app sync sample
+                    argocd app wait sample
                     '''
-                
                 }
             }
         }
     }
 }
-
