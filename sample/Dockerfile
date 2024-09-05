@@ -5,16 +5,16 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the requirements file into the container
-COPY requirements.txt /app/
+COPY sample/requirements.txt /app/
 
 # Install the dependencies
-RUN pip install -r requirements.txt
+RUN pip install -r /app/requirements.txt
 
 # Copy the rest of the application code into the container
-COPY . /app/
+COPY sample/ /app/
 
 # Expose the port the app runs on
 EXPOSE 5000
 
 # Define the command to run the app
-CMD ["python", "app.py"]
+CMD ["python", "/app/app.py"]
