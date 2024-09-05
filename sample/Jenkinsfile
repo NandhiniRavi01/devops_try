@@ -5,8 +5,6 @@ pipeline {
         IMAGE_TAG = "v9"
         LOCAL_REGISTRY = "localhost:5000"
         ARGOCD_SERVER = "localhost:8081"
-        ARGOCD_USER = "admin"
-        ARGOCD_PASSWORD = "yHLKjwZPbFr8oamE"
     }
 
     stages {
@@ -45,11 +43,11 @@ pipeline {
                 script {
                     sh '''
                     echo "Authenticating with ArgoCD"
-                    argocd login ${ARGOCD_SERVER} --username ${ARGOCD_USER} --password ${ARGOCD_PASSWORD} --insecure
-
-                    echo "Deploying to Kubernetes"
-                    argocd app sync sample
-                    argocd app wait sample
+                    argocd login ${ARGOCD_SERVER} --username admin --password yHLKjwZPbFr8oamE --insecure
+                    
+                    echo "Deploying to Kubernetes using ArgoCD"
+                    argocd app sync argocd/sample
+                    argocd app wait argocd/sample --timeout 300
                     '''
                 }
             }
