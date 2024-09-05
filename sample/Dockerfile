@@ -5,7 +5,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the requirements file into the container
-COPY sample/requirements.txt .
+COPY sample/requirements.txt /app/
 
 # Install the dependencies
 RUN pip install -r requirements.txt
@@ -17,4 +17,4 @@ COPY sample/ /app/
 EXPOSE 5000
 
 # Define the command to run the app
-CMD ["python", "app.py"]
+CMD ["python", "/app/app.py"]
