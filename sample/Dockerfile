@@ -8,7 +8,7 @@ WORKDIR /app
 COPY sample/requirements.txt /app/
 
 # Install the dependencies
-RUN pip install -r requirements.txt
+RUN pip install requirements.txt
 
 # Copy the rest of the application code into the container
 COPY sample/ /app/
