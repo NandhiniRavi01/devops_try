@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 WORKDIR /app
-COPY sample/requirements.txt ./
+COPY requirements.txt ./
 RUN pip install -r requirements.txt
-COPY sample/ .  # Make sure this matches the actual directory name
+COPY . .
 CMD ["python", "app.py"]
