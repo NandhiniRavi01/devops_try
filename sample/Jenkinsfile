@@ -4,6 +4,11 @@ pipeline {
     environment {
         IMAGE_TAG = "v9"
         LOCAL_REGISTRY = "localhost:5000"
+        ARGOCD_SERVER = "localhost:8081"
+        ARGOCD_APP_NAME = "sample" // Replace with your ArgoCD application name
+        ARGOCD_CREDENTIALS_ID = '7bad98ea-fb39-4fe7-831d-25f46c858a78' // Replace with your Jenkins credentials ID
+        REPO_URL = "https://github.com/NandhiniRavi01/Manifest" // URL to the repository containing deploy.yaml
+        DEPLOYMENT_PATH = "sample/deploy.yaml"
     }
 
     stages {
@@ -40,10 +45,30 @@ pipeline {
         stage('Deploy to Kubernetes using ArgoCD') {
             steps {
                 script {
-                    sh '''
-                    echo "Deploying to Kubernetes using ArgoCD"
-                    # Add commands to deploy using ArgoCD
-                    '''
+                    withCredentials([usernamePassword(credentialsId: "${ARGOCD_CREDENTIALS_ID}", usernameVariable: 'ARGOCD_USERNAME', passwordVariable: 'ARGOCD_PASSWORD')]) {
+                        sh '''
+                        echo "Installing ArgoCD CLI"
+                        curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/v2.5.0/argocd-linux-amd64
+                        chmod +x argocd-linux-amd64
+                        mv argocd-linux-amd64 /usr/local/bin/argocd
+
+                        echo "Logging in to ArgoCD"
+                        argocd login ${ARGOCD_SERVER} --username ${ARGOCD_USERNAME} --password ${ARGOCD_PASSWORD} --insecure
+
+                        echo "Creating or Updating ArgoCD Application"
+                        argocd app create ${ARGOCD_APP_NAME} \
+                            --repo ${REPO_URL} \
+                            --path ${DEPLOYMENT_PATH} \
+                            --dest-server https://kubernetes.default.svc \
+                            --dest-namespace default \
+                            --sync-policy automated
+
+                        echo "Syncing the ArgoCD application"
+                        argocd app sync ${ARGOCD_APP_NAME}
+
+                        echo "Waiting for ArgoCD application to be healthy"
+                        argocd app wait ${ARGOCD_APP_NAME}
+                        '''
                 }
             }
         }
