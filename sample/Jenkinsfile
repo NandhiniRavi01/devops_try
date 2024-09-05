@@ -5,10 +5,8 @@ pipeline {
         IMAGE_TAG = "v9"
         LOCAL_REGISTRY = "localhost:5000"
         ARGOCD_SERVER = "localhost:8081"
-        ARGOCD_APP_NAME = "sample" // Replace with your ArgoCD application name
-        ARGOCD_CREDENTIALS_ID = '7bad98ea-fb39-4fe7-831d-25f46c858a78' // Replace with your Jenkins credentials ID
-        REPO_URL = "https://github.com/NandhiniRavi01/Manifest" // URL to the repository containing deploy.yaml
-        DEPLOYMENT_PATH = "sample/deploy.yaml"
+        
+        ARGOCD_AUTH = "admin:yHLKjwZPbFr8oamE"
     }
 
     stages {
