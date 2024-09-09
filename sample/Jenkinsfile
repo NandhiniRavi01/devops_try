@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         IMAGE_TAG = "v9"
-        LOCAL_REGISTRY = "34.148.155.112:8083"
-        ARGOCD_SERVER = "34.148.155.112:8081"
+        LOCAL_REGISTRY = "http://34.148.155.112:8083"
+        ARGOCD_SERVER = "https://34.148.155.112:8081" // Updated to include 'https://'
     }
 
     stages {
@@ -38,24 +38,13 @@ pipeline {
             }
         }
 
-        stage('Update Deployment YAML') {
-            steps {
-                script {
-                    sh '''
-                    echo "Updating Deployment YAML with new image"
-                    sed -i 's|gcr.io/white-welder-432609-t7/python-app:v9|'${LOCAL_REGISTRY}/python-app:${IMAGE_TAG}'|g' path/to/deployment.yaml
-                    '''
-                }
-            }
-        }
-
         stage('Deploy to Kubernetes using ArgoCD') {
             steps {
                 script {
                     sh '''
                     echo "Authenticating with ArgoCD"
                     argocd login ${ARGOCD_SERVER} --username admin --password ncKin-XiDzlA9s9e --insecure
-                    
+
                     echo "Deploying to Kubernetes using ArgoCD"
                     argocd app sync argocd/sample
                     argocd app wait argocd/sample --timeout 300
