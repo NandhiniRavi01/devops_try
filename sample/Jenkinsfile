@@ -43,7 +43,7 @@ pipeline {
                 script {
                     sh '''
                     echo "Authenticating with ArgoCD"
-                    argocd login ${ARGOCD_SERVER} --username admin --password yHLKjwZPbFr8oamE --insecure
+                    argocd login ${ARGOCD_SERVER} --username admin --password ncKin-XiDzlA9s9e --insecure
                     
                     echo "Deploying to Kubernetes using ArgoCD"
                     argocd app sync argocd/sample
