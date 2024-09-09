@@ -16,6 +16,23 @@ pipeline {
                     branch: 'main'
             }
         }
+        stages {
+        stage('Setup') {
+            steps {
+                script {
+                    // Define the location of the Google credentials file
+                    def googleCredentialsFile = "${env.WORKSPACE}/google-key.json"
+                    
+                    // Copy the credential file from Jenkins credentials to workspace
+                    withCredentials([file(credentialsId: 'google-credentials', variable: 'GOOGLE_KEY_JSON')]) {
+                        sh "cp ${GOOGLE_KEY_JSON} ${googleCredentialsFile}"
+                    }
+                    
+                    // Set environment variable to use the credentials
+                    sh "export GOOGLE_APPLICATION_CREDENTIALS=${googleCredentialsFile}"
+                }
+            }
+        }
         
 
         stage('Build Docker') {
