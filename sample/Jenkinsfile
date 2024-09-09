@@ -38,6 +38,17 @@ pipeline {
             }
         }
 
+        stage('Update Deployment YAML') {
+            steps {
+                script {
+                    sh '''
+                    echo "Updating Deployment YAML with new image"
+                    sed -i 's|gcr.io/white-welder-432609-t7/python-app:v9|'${LOCAL_REGISTRY}/python-app:${IMAGE_TAG}'|g' path/to/deployment.yaml
+                    '''
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes using ArgoCD') {
             steps {
                 script {
