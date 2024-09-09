@@ -24,7 +24,7 @@ pipeline {
                     def googleCredentialsFile = "${env.WORKSPACE}/google-key.json"
                     
                     // Copy the credential file from Jenkins credentials to workspace
-                    withCredentials([file(credentialsId: 'google-credentials', variable: 'GOOGLE_KEY_JSON')]) {
+                    withCredentials([file(credentialsId: 'google-credential', variable: 'GOOGLE_KEY_JSON')]) {
                         sh "cp ${GOOGLE_KEY_JSON} ${googleCredentialsFile}"
                     }
                     
