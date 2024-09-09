@@ -5,6 +5,7 @@ pipeline {
         IMAGE_TAG = "v9"
         LOCAL_REGISTRY = "gcr.io/white-welder-432609-t7"
         ARGOCD_SERVER = "https://34.148.155.112:8081" // Updated to include 'https://'
+        SERVICE_ACCOUNT_JSON = "https://github.com/NandhiniRavi01/devops_try/edit/main/sample/key.json"
     }
 
     stages {
@@ -13,6 +14,18 @@ pipeline {
                 git credentialsId: 'git-credential', 
                     url: 'https://github.com/NandhiniRavi01/devops_try',
                     branch: 'main'
+            }
+        }
+        stages {
+        stage('Authenticate Docker with GCR') {
+            steps {
+                script {
+                    sh '''
+                    echo "Authenticating Docker with GCR"
+                    gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT_JSON}
+                    gcloud auth configure-docker
+                    '''
+                }
             }
         }
 
