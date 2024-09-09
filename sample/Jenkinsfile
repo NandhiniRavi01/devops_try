@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_TAG = "v9"
         LOCAL_REGISTRY = "gcr.io/white-welder-432609-t7"
-        ARGOCD_SERVER = "https://34.148.155.112:8081" // Updated to include 'https://'
+        ARGOCD_SERVER = "https://35.196.138.36:8081" // Updated to include 'https://'
         SERVICE_ACCOUNT_JSON = "https://github.com/NandhiniRavi01/devops_try/edit/main/sample/key.json"
     }
 
