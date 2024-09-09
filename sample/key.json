@@ -1,0 +1,15 @@
+{
+  "type": "service_account",
+  "project_id": "white-welder-432609-t7",
+  "private_key_id": "d0854e2512eb3d2d112bc1dcba8fe269b78089b5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDcXHF1DEd93rq5\n7ZTAUd2TXk6yyHc0G6lFz6T6pco9RlE4Iy8UZ8WQ3xIqWiQVS8TaaG7Cvu/8K8HD\nhTtSWKMOxyZq8vGy54uTzDYHGVzAODUlb7hwlvwAsHksGT1YJeJZq>
+  "client_email": "my-service-account@white-welder-432609-t7.iam.gserviceaccount.com",
+  "client_id": "108814266065406457082",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/my-service-account%40white-welder-432609-t7.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
+
+
