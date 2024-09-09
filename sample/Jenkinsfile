@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_TAG = "v9"
-        LOCAL_REGISTRY = "http://34.148.155.112:8083"
+        LOCAL_REGISTRY = "gcr.io/white-welder-432609-t7"
         ARGOCD_SERVER = "https://34.148.155.112:8081" // Updated to include 'https://'
     }
 
