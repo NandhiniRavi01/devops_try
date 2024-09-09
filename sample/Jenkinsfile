@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         IMAGE_TAG = "v9"
-        LOCAL_REGISTRY = "localhost:5000"
-        ARGOCD_SERVER = "localhost:8081"
+        LOCAL_REGISTRY = "34.148.155.112:8083"
+        ARGOCD_SERVER = "34.148.155.112:8081"
     }
 
     stages {
