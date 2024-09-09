@@ -11,9 +11,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                 
-                    url: 'https://github.com/NandhiniRavi01/devops_try',
-                    branch: 'main'
+                checkout([$class: 'GitSCM', 
+                          userRemoteConfigs: [[url: 'https://github.com/NandhiniRavi01/devops_try']]])
             }
         }
         stages {
