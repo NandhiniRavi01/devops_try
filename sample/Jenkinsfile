@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     // Use the Jenkins credential to manage the Google Cloud key
-                    withCredentials([file(credentialsId: 'gcloud-key', variable: 'GCLOUD_KEY_FILE')]) {
+                    withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
                         // Copy the credential file to a temporary location
                         sh 'cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json'
                         
