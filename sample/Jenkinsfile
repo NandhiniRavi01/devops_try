@@ -49,7 +49,7 @@ pipeline {
                         echo "Listing files in /tmp after copy"
                         ls -l /tmp
                         echo "Validating JSON file"
-                        jq . /tmp/gcloud-key.json || { echo "Invalid JSON format";
+                        jq . /tmp/gcloud-key.json || { echo "Invalid JSON format"; cat /tmp/gcloud-key.json; }
                         cat /tmp/gcloud-key.json
                         '''
                     }
