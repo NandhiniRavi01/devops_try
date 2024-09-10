@@ -21,30 +21,31 @@ pipeline {
        
         
             stage('Setup Google Cloud') {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
-                        sh '''
-                        echo "GCLOUD_KEY_FILE is set to $GCLOUD_KEY_FILE"
-                        ls -l $GCLOUD_KEY_FILE
+    steps {
+        script {
+            withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
+                sh '''
+                echo "GCLOUD_KEY_FILE is set to $GCLOUD_KEY_FILE"
+                ls -l $GCLOUD_KEY_FILE
 
-                        echo "Checking /tmp permissions"
-                        ls -ld /tmp
+                echo "Checking /tmp permissions"
+                ls -ld /tmp
 
-                        echo "Testing write access"
-                        touch /tmp/testfile
-                        rm /tmp/testfile
+                echo "Testing write access"
+                touch /tmp/testfile
+                rm /tmp/testfile
 
-                        echo "Copying Google Cloud key to /tmp"
-                        cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json
+                echo "Copying Google Cloud key to /tmp"
+                cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json
 
-                        echo "Listing files in /tmp after copy"
-                        ls -l /tmp
-                        '''
-                    }
-                }
+                echo "Listing files in /tmp after copy"
+                ls -l /tmp
+                '''
             }
         }
+    }
+}
+
             
 
         stage('Build Docker') {
