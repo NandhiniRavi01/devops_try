@@ -21,25 +21,23 @@ pipeline {
        
         
             stage('Setup Google Cloud') {
-            steps {
-                script {
-                    // Use the Jenkins credential to manage the Google Cloud key
-                    withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
-                        // Copy the credential file to a temporary location
-                        sh 'cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json'
-                        
-                        // Install and initialize Google Cloud SDK
-                        sh '''
-                        curl -sSL https://sdk.cloud.google.com | bash
-                        source ~/.bashrc
-                        gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
-                        gcloud config set project your-gcp-project-id
-                        '''
-                    }
-                }
+    steps {
+        script {
+            withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
+                sh '''
+                echo "Checking /tmp permissions"
+                ls -ld /tmp
+                echo "Testing write access"
+                touch /tmp/testfile
+                rm /tmp/testfile
+                
+                echo "Copying Google Cloud key"
+                cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json
+                '''
             }
         }
-        
+    }
+}
 
             
 
