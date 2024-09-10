@@ -33,7 +33,7 @@ pipeline {
                         rm /tmp/testfile
 
                         echo "Copying Google Cloud key to /tmp"
-                        sudo cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json
+                        cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json
 
                         echo "Listing files in /tmp after copy"
                         ls -l /tmp
@@ -95,7 +95,9 @@ pipeline {
         always {
             echo "Cleaning up"
             sh '''
-            sudo rm -f /tmp/gcloud-key.json
+            if [ -f /tmp/gcloud-key.json ]; then
+                rm -f /tmp/gcloud-key.json
+            fi
             '''
         }
     }
