@@ -17,31 +17,21 @@ pipeline {
             }
         }
         
+        
+    stages {
         stage('Setup Google Cloud') {
-    steps {
-        script {
-            withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
-                sh '''
-                echo "GCLOUD_KEY_FILE is set to $GCLOUD_KEY_FILE"
-                ls -l $GCLOUD_KEY_FILE
-
-                echo "Checking /tmp permissions"
-                ls -ld /tmp
-
-                echo "Testing write access"
-                touch /tmp/testfile
-                rm /tmp/testfile
-
-                echo "Copying Google Cloud key to /tmp"
-                cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json
-
-                echo "Listing files in /tmp after copy"
-                ls -l /tmp
-                '''
+            steps {
+                script {
+                    sh 'echo $GCLOUD_KEY_FILE'
+                    sh 'ls -l /tmp'
+                    sh 'touch /tmp/testfile || echo "Failed to create test file"'
+                    sh 'rm /tmp/testfile || echo "Failed to remove test file"'
+                    sh 'cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json || echo "Failed to copy key file"'
+                }
             }
         }
     }
-}
+
 
 
         stage('Build Docker Image') {
