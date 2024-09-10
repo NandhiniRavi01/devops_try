@@ -49,7 +49,7 @@ pipeline {
                         echo "Listing files in /tmp after copy"
                         ls -l /tmp
                         echo "Validating JSON file"
-                        
+                        cat /tmp/gcloud-key.json
                         '''
                     }
                 }
