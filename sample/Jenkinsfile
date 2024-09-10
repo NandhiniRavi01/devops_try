@@ -19,7 +19,7 @@ pipeline {
             }
         }
        
-        stage('Setup') {
+        
             stage('Setup Google Cloud') {
             steps {
                 script {
@@ -39,7 +39,7 @@ pipeline {
                 }
             }
         }
-        }
+        
 
             
 
