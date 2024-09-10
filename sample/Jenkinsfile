@@ -20,12 +20,16 @@ pipeline {
         stage('Setup Google Cloud') {
     steps {
         script {
-            sh '''
-            echo Moving Google Cloud key to /tmp
-            cp /var/lib/jenkins/workspace/CI_pipeline@2/sample/key.json /tmp/gcloud-key.json
-            echo Authenticating with Google Cloud
-            gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
-            '''
+            try {
+                sh '''
+                echo "Moving Google Cloud key to /tmp"
+                cp /var/lib/jenkins/workspace/CI_pipeline@2/sample/key.json /tmp/gcloud-key.json
+                echo "Authenticating with Google Cloud"
+                gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
+                '''
+            } catch (Exception e) {
+                error "Failed to authenticate with Google Cloud: ${e.getMessage()}"
+            }
         }
     }
 }
