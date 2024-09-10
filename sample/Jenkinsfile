@@ -17,18 +17,19 @@ pipeline {
             }
         }
         
-       stage('Setup Google Cloud') {
-    steps {
-        script {
-            sh '''
-            echo Authenticating with Google Cloud
-            gcloud auth activate-service-account --key-file=/var/lib/jenkins/workspace/CI_pipeline@2/sample/key.json
-            '''
+        stage('Setup Google Cloud') {
+            steps {
+                script {
+                    sh '''
+                    echo Moving Google Cloud key to /tmp
+                    cp /var/lib/jenkins/workspace/CI_pipeline@2/sample/key.json /tmp/gcloud-key.json
+                    
+                    echo Authenticating with Google Cloud
+                    gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
+                    '''
+                }
+            }
         }
-    }
-}
-
-
 
         stage('Build Docker Image') {
             steps {
@@ -47,7 +48,7 @@ pipeline {
                     withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
                         sh '''
                         echo "Authenticating with Google Cloud"
-                        gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
+                        gcloud auth activate-service-account --key-file=${GCLOUD_KEY_FILE}
                         gcloud auth configure-docker
 
                         echo "Pushing Docker image"
@@ -61,14 +62,16 @@ pipeline {
         stage('Deploy to Kubernetes using ArgoCD') {
             steps {
                 script {
-                    sh '''
-                    echo "Authenticating with ArgoCD"
-                    argocd login ${ARGOCD_SERVER} --username admin --password ncKin-XiDzlA9s9e --insecure
+                    withCredentials([usernamePassword(credentialsId: 'argocd-credentials', usernameVariable: 'ARGOCD_USER', passwordVariable: 'ARGOCD_PASS')]) {
+                        sh '''
+                        echo "Authenticating with ArgoCD"
+                        argocd login ${ARGOCD_SERVER} --username ${ARGOCD_USER} --password ${ARGOCD_PASS} --insecure
 
-                    echo "Deploying to Kubernetes using ArgoCD"
-                    argocd app sync argocd/sample
-                    argocd app wait argocd/sample --timeout 300
-                    '''
+                        echo "Deploying to Kubernetes using ArgoCD"
+                        argocd app sync argocd/sample
+                        argocd app wait argocd/sample --timeout 300
+                        '''
+                    }
                 }
             }
         }
