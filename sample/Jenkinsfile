@@ -17,22 +17,34 @@ pipeline {
             }
         }
         
-        stage('Setup Google Cloud') {
+stage('Setup Google Cloud') {
     steps {
         script {
-            try {
+            withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
                 sh '''
-                echo "Moving Google Cloud key to /tmp"
-                cp /var/lib/jenkins/workspace/CI_pipeline@2/sample/key.json /tmp/gcloud-key.json
-                echo "Authenticating with Google Cloud"
-                gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
+                echo "GCLOUD_KEY_FILE is set to $GCLOUD_KEY_FILE"
+                ls -l $GCLOUD_KEY_FILE
+
+                echo "Checking /tmp permissions"
+                ls -ld /tmp
+
+                echo "Testing write access"
+                touch /tmp/testfile
+                rm /tmp/testfile
+
+                echo "Copying Google Cloud key to /tmp"
+                cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json
+
+                echo "Listing files in /tmp after copy"
+                ls -l /tmp
+                echo "Validating JSON file"
+                jq . /tmp/gcloud-key.json || echo "Invalid JSON format"
                 '''
-            } catch (Exception e) {
-                error "Failed to authenticate with Google Cloud: ${e.getMessage()}"
             }
         }
     }
 }
+
 
 
         stage('Build Docker Image') {
