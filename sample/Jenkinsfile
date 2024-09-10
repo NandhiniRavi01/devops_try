@@ -44,15 +44,19 @@ pipeline {
             
 
         stage('Build Docker') {
-            steps {
-                script {
-                    sh '''
-                    echo "Building Docker Image"
-                    docker build -t ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG} -f sample/Dockerfile .
-                    '''
-                }
+    steps {
+        script {
+            try {
+                sh '''
+                echo "Building Docker Image"
+                docker build -t ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG} -f sample/Dockerfile .
+                '''
+            } catch (Exception e) {
+                error("Docker build failed: ${e.message}")
             }
         }
+    }
+}
 
         stage('Push Docker Image to Local Registry') {
             steps {
