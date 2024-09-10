@@ -17,42 +17,40 @@ pipeline {
             }
         }
         
-stage('Setup Google Cloud') {
-    steps {
-        script {
-            withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
-                sh '''
-                echo "GCLOUD_KEY_FILE is set to $GCLOUD_KEY_FILE"
-                ls -l $GCLOUD_KEY_FILE
+        stage('Setup Google Cloud') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
+                        sh '''
+                        echo "GCLOUD_KEY_FILE is set to $GCLOUD_KEY_FILE"
+                        ls -l $GCLOUD_KEY_FILE
 
-                echo "Checking /tmp permissions"
-                ls -ld /tmp
+                        echo "Checking /tmp permissions"
+                        ls -ld /tmp
 
-                echo "Testing write access"
-                touch /tmp/testfile
-                rm /tmp/testfile
+                        echo "Testing write access"
+                        touch /tmp/testfile
+                        rm /tmp/testfile
 
-                echo "Copying Google Cloud key to /tmp"
-                cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json
+                        echo "Copying Google Cloud key to /tmp"
+                        sudo cp $GCLOUD_KEY_FILE /tmp/gcloud-key.json
 
-                echo "Listing files in /tmp after copy"
-                ls -l /tmp
-                echo "Validating JSON file"
-                jq . /tmp/gcloud-key.json || echo "Invalid JSON format"
-                '''
+                        echo "Listing files in /tmp after copy"
+                        ls -l /tmp
+                        echo "Validating JSON file"
+                        jq . /tmp/gcloud-key.json || echo "Invalid JSON format"
+                        '''
+                    }
+                }
             }
         }
-    }
-}
-
-
 
         stage('Build Docker Image') {
             steps {
                 script {
                     sh '''
                     echo "Building Docker image"
-                    docker build -t gcr.io/white-welder-432609-t7/python-app:v9 -f sample/Dockerfile .
+                    docker build -t ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG} -f sample/Dockerfile .
                     '''
                 }
             }
@@ -68,7 +66,7 @@ stage('Setup Google Cloud') {
                         gcloud auth configure-docker
 
                         echo "Pushing Docker image"
-                        docker push gcr.io/white-welder-432609-t7/python-app:v9
+                        docker push ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG}
                         '''
                     }
                 }
@@ -96,7 +94,9 @@ stage('Setup Google Cloud') {
     post {
         always {
             echo "Cleaning up"
-            sh 'rm -f /tmp/gcloud-key.json'
+            sh '''
+            sudo rm -f /tmp/gcloud-key.json
+            '''
         }
     }
 }
