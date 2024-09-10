@@ -48,31 +48,34 @@ pipeline {
 
             
 
-        stage('Build Docker') {
+       stage('Build Docker Image') {
     steps {
         script {
-            try {
+            withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
                 sh '''
-                echo "Building Docker Image"
-                docker build -t ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG} -f sample/Dockerfile .
+                echo "GCLOUD_KEY_FILE is set to $GCLOUD_KEY_FILE"
+                docker build -t gcr.io/white-welder-432609-t7/python-app:v9 -f sample/Dockerfile .
                 '''
-            } catch (Exception e) {
-                error("Docker build failed: ${e.message}")
             }
         }
     }
 }
 
-        stage('Push Docker Image to Local Registry') {
-            steps {
-                script {
-                    sh '''
-                    echo "Pushing Docker Image to Local Registry"
-                    docker push ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG}
-                    '''
-                }
+stage('Push Docker Image to Local Registry') {
+    steps {
+        script {
+            withCredentials([file(credentialsId: 'google-credentials', variable: 'GCLOUD_KEY_FILE')]) {
+                sh '''
+                echo "Authenticating with Google Cloud"
+                gcloud auth activate-service-account --key-file=$GCLOUD_KEY_FILE
+                gcloud auth configure-docker
+                docker push gcr.io/white-welder-432609-t7/python-app:v9
+                '''
             }
         }
+    }
+}
+
 
         stage('Deploy to Kubernetes using ArgoCD') {
             steps {
