@@ -21,7 +21,7 @@ pipeline {
                 script {
                     sh '''
                     echo "Building Docker Image"
-                    docker build -t ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG} -f sample/Dockerfile .
+                    docker build -t ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG} -f sample1/Dockerfile .
                     '''
                 }
             }
