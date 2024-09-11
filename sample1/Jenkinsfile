@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_TAG = "v9"
-        LOCAL_REGISTRY = "localhost:5000"
+        IMAGE_TAG = "latest"
+        
         ARGOCD_SERVER = "localhost:8081"
     }
 
@@ -21,7 +21,7 @@ pipeline {
                 script {
                     sh '''
                     echo "Building Docker Image"
-                    docker build -t ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG} -f sample1/Dockerfile .
+                    docker build -t devopstry:${IMAGE_TAG} -f sample1/Dockerfile .
                     '''
                 }
             }
@@ -32,7 +32,7 @@ pipeline {
                 script {
                     sh '''
                     echo "Pushing Docker Image to Local Registry"
-                    docker push ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG}
+                    docker push devopstry:${IMAGE_TAG}
                     '''
                 }
             }
