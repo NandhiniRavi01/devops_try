@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_TAG = "v9"
+        LOCAL_REGISTRY = "localhost:5000"
+        ARGOCD_SERVER = "localhost:8081"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git credentialsId: 'git-credential', 
+                    url: 'https://github.com/NandhiniRavi01/devops_try',
+                    branch: 'main'
+            }
+        }
+
+        stage('Build Docker') {
+            steps {
+                script {
+                    sh '''
+                    echo "Building Docker Image"
+                    docker build -t ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG} -f sample/Dockerfile .
+                    '''
+                }
+            }
+        }
+
+        stage('Push Docker Image to Local Registry') {
+            steps {
+                script {
+                    sh '''
+                    echo "Pushing Docker Image to Local Registry"
+                    docker push ${LOCAL_REGISTRY}/python-app:${IMAGE_TAG}
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes using ArgoCD') {
+            steps {
+                script {
+                    sh '''
+                    echo "Authenticating with ArgoCD"
+                    argocd login ${ARGOCD_SERVER} --username admin --password yHLKjwZPbFr8oamE --insecure
+                    
+                    echo "Deploying to Kubernetes using ArgoCD"
+                    argocd app sync argocd/sample
+                    argocd app wait argocd/sample --timeout 300
+                    '''
+                }
+            }
+        }
+    }
+}
