@@ -1,6 +1,7 @@
 FROM python:3.9-slim
-WORKDIR /app
-COPY sample1/requirements.txt ./
+WORKDIR /python-flask
+WORKDIR /python-flask
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
-CMD ["python", "app.py"]
+CMD ["python", "./app.py"]
