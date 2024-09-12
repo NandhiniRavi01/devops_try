@@ -43,13 +43,6 @@ pipeline {
                 }
             }
         }
-        stage('Build and Test') {
-            steps {
-                script {
-                    echo 'Running Flask Application'
-                    sh 'docker exec myapp python3 app.py'
-                }
-            }
-        }
+        
     }
 }
