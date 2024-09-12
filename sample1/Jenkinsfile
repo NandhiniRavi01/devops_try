@@ -32,9 +32,9 @@ pipeline {
                 script {
                     echo 'Pushing Docker Image to Local Registry'
                     // Tag the image for the local registry
-                    sh 'docker tag devopstry:latest devopstry:latest'
+                    sh 'docker tag devopstry:latest localhost:5001/devopstry:latest'
                     // Push the image to the local registry
-                    sh 'docker push devopstry:latest'
+                    sh 'docker push localhost:5001/devopstry:latest'
                 }
             }
         }
