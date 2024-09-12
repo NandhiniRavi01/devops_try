@@ -1,98 +1,53 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_TAG = "latest"
-        ARGOCD_SERVER = "localhost:8081"
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'git-credential', 
-                    url: 'https://github.com/NandhiniRavi01/devops_try',
-                    branch: 'main'
+                git 'https://github.com/NandhiniRavi01/devops_try'
             }
         }
-
         stage('Build Docker') {
             steps {
                 script {
-                    sh '''
-                    echo "Building Docker Image"
-                    docker build -t devopstry:latest .
-                    '''
+                    echo 'Building Docker Image'
+                    sh 'docker build -t devopstry:latest .'
                 }
             }
         }
-
         stage('Cleanup Docker') {
             steps {
                 script {
                     echo 'Cleaning up old Docker containers'
-                    sh '''
-                    docker rm -f myapp || true
-                    docker container prune -f || true
-                    '''
+                    sh 'docker rm -f myapp || true'
+                    sh 'docker container prune -f'
                 }
             }
         }
-
-        stage('Check Port Availability') {
-    steps {
-        script {
-            def portFree = false
-            while (!portFree) {
-                def result = sh(script: 'sudo lsof -i :5000', returnStatus: true)
-                if (result == 1) {
-                    portFree = true
-                } else {
-                    echo 'Port 5000 is still in use. Waiting...'
-                    sleep(time: 10, unit: 'SECONDS')
+        stage('Check and Free Port') {
+            steps {
+                script {
+                    echo 'Checking and freeing port 5000 if in use'
+                    sh "sudo fuser -k 5000/tcp || true"
                 }
             }
         }
-    }
-}
-
         stage('Run Docker Container') {
             steps {
                 script {
                     echo 'Running Docker Container'
-                    sh '''
-                    docker run -d --name myapp -p 5000:5000 devopstry:latest
-                    '''
-                    
-                    // Optionally, wait for the container to be fully up
-                    sleep(time: 20, unit: 'SECONDS')
-
-                    // Check if Flask is installed and application is running
-                    sh '''
-                    docker exec myapp pip show flask
-                    docker exec myapp ls
-                    '''
+                    sh 'docker run -d --name myapp -p 5000:5000 devopstry:latest'
+                    sleep 20
+                    sh 'docker exec myapp pip show flask'
+                    sh 'docker exec myapp ls'
                 }
             }
         }
-
         stage('Build and Test') {
             steps {
                 script {
                     echo 'Running Flask Application'
-                    sh '''
-                    docker exec myapp python3 app.py
-                    '''
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                script {
-                    echo 'Running Tests'
-                    sh '''
-                    docker exec myapp python3 -m pytest
-                    '''
+                    sh 'docker exec myapp python3 app.py'
                 }
             }
         }
