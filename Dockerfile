@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Specify the command to run the application
-CMD ["python", "./app.py"]
+CMD ["/bin/sh", "-c", ". venv/bin/activate && python app.py"]
 
 # Expose port 5000 for the application
 EXPOSE 5000
