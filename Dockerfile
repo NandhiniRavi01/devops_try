@@ -1,21 +1,26 @@
-# Use a more feature-complete base image if possible
-FROM python:3.9-alpine
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
 
-# Install necessary packages
-RUN apk add --no-cache \
-    curl \
-    bash
+# Set the working directory in the container
+WORKDIR /python-flask
 
-# Install pip (if not already available)
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py
+# Install curl (if not already available) and download get-pip.py
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    python get-pip.py 
 
-# Install Flask
-RUN pip install Flask==2.0.3
+# Copy the requirements file into the container at /python-flask
+COPY requirements.txt .
 
-# Add your application code
-COPY . /app
-WORKDIR /app
+# Install the dependencies from requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Command to run the application
-CMD ["python3", "app.py"]
+# Copy the rest of the application code into the container
+COPY . .
 
+# Specify the command to run the application
+CMD ["python", "./app.py"]
+
+# Expose port 5000 for the application
+EXPOSE 5000
