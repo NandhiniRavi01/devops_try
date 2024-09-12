@@ -11,7 +11,7 @@ RUN apt-get update && \
     python get-pip.py 
 
 # Copy the requirements file into the container at /python-flask
-COPY requirements.txt .
+COPY sample1/requirements.txt .
 
 # Install the dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
