@@ -46,7 +46,7 @@ pipeline {
                     docker run -d -p 5000:5000 --name myapp devopstry:latest
                     '''
                     // Adding a wait period to ensure the container is up and running
-                    sleep(time: 30, unit: 'SECONDS')
+                   
                 }
             }
         }
