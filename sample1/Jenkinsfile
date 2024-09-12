@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         IMAGE_TAG = "latest"
-        
         ARGOCD_SERVER = "localhost:8081"
     }
 
@@ -22,7 +21,6 @@ pipeline {
                     sh '''
                     echo "Building Docker Image"
                     docker build -t devopstry:latest .
-
                     '''
                 }
             }
@@ -44,23 +42,40 @@ pipeline {
                 script {
                     echo 'Running Docker Container'
                     sh '''
-                    docker run -d -p 5000:5000 --name myapp devopstry:latest
+                    docker run -d --name myapp -p 5000:5000 devopstry:latest
                     '''
-                    // Adding a wait period to ensure the container is up and running
-                   
+                    
+                    // Optionally, wait for the container to be fully up
+                    sleep(time: 20, unit: 'SECONDS')
+
+                    // Check if Flask is installed and application is running
+                    sh '''
+                    docker exec myapp pip show flask
+                    docker exec myapp ls
+                    '''
                 }
             }
         }
 
-       stage('Build') {
+        stage('Build and Test') {
             steps {
-                git branch: 'main', url: 'https://github.com/NandhiniRavi01/devops_try.git'
-                sh 'python3 app.py'
+                script {
+                    echo 'Running Flask Application'
+                    sh '''
+                    docker exec myapp python3 app.py
+                    '''
+                }
             }
         }
+
         stage('Test') {
             steps {
-                sh 'python3 -m pytest'
+                script {
+                    echo 'Running Tests'
+                    sh '''
+                    docker exec myapp python3 -m pytest
+                    '''
+                }
             }
         }
     }
