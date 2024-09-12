@@ -37,6 +37,24 @@ pipeline {
                 }
             }
         }
+
+        stage('Check Port Availability') {
+    steps {
+        script {
+            def portFree = false
+            while (!portFree) {
+                def result = sh(script: 'sudo lsof -i :5000', returnStatus: true)
+                if (result == 1) {
+                    portFree = true
+                } else {
+                    echo 'Port 5000 is still in use. Waiting...'
+                    sleep(time: 10, unit: 'SECONDS')
+                }
+            }
+        }
+    }
+}
+
         stage('Run Docker Container') {
             steps {
                 script {
