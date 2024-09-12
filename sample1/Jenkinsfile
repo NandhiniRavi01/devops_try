@@ -38,8 +38,7 @@ pipeline {
                 }
             }
         }
-    }
-}
+    
 
        stage('Build') {
             steps {
