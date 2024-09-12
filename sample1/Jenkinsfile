@@ -27,8 +27,8 @@ pipeline {
         stage('Check and Free Port') {
             steps {
                 script {
-                    echo 'Checking and freeing port 5000 if in use'
-                    sh "sudo fuser -k 5000/tcp || true"
+                    echo 'Checking and freeing port 5006 if in use'
+                    sh "sudo fuser -k 5006/tcp || true"
                 }
             }
         }
@@ -36,7 +36,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running Docker Container'
-                    sh 'docker run -d --name myapp -p 5000:5000 devopstry:latest'
+                    sh 'docker run -d --name myapp -p 5006:5006 devopstry:latest'
                     sleep 20
                     sh 'docker exec myapp pip show flask'
                     sh 'docker exec myapp ls'
