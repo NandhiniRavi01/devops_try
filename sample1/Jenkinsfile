@@ -21,7 +21,8 @@ pipeline {
                 script {
                     sh '''
                     echo "Building Docker Image"
-                    docker build -t devopstry:${IMAGE_TAG} -f sample1/Dockerfile .
+                    docker build -t devopstry:latest .
+
                     '''
                 }
             }
