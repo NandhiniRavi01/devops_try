@@ -30,13 +30,16 @@ pipeline {
         stage('Push Docker Image to Local Registry') {
             steps {
                 script {
-                    sh '''
-                    echo "Pushing Docker Image to Local Registry"
-                    docker push devopstry:${IMAGE_TAG}
-                    '''
+                    echo 'Pushing Docker Image to Local Registry'
+                    // Tag the image for the local registry
+                    sh 'docker tag devopstry:latest devopstry:latest'
+                    // Push the image to the local registry
+                    sh 'docker push devopstry:latest'
                 }
             }
         }
+    }
+}
 
        stage('Build') {
             steps {
