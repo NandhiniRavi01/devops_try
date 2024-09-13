@@ -2,6 +2,13 @@ pipeline {
     agent any
 
     stages {
+        stage('Expose Jenkins with Ngrok') {
+            steps {
+                script {
+                    sh 'nohup ngrok http 8080 &'
+                }
+            }
+        }
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/NandhiniRavi01/devops_try'
