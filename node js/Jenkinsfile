@@ -1,6 +1,11 @@
 pipeline {
     agent any
-
+    environment {
+        SUDO_PASSWORD = credentials('sudo-credentials')  // Replace 'sudo-password-id' with your Jenkins credential ID
+    }
+    
+   
+        
     stages {
         stage('Checkout') {
             steps {
@@ -9,13 +14,19 @@ pipeline {
         }
        stage('Install Node.js') {
             steps {
-                // Run shell commands to install Node.js
-                sh '''
-                    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-                    sudo apt-get install -y nodejs
-                '''
+                script {
+                    sh "./run_command_with_sudo.exp ${SUDO_PASSWORD} 'curl -fsSL https://deb.nodesource.com/setup_18.x | bash -'"
+                }
             }
         }
+        stage('Install Node.js Package') {
+            steps {
+                script {
+                    sh "./run_command_with_sudo.exp ${SUDO_PASSWORD} 'apt-get install -y nodejs'"
+                }
+            }
+        }
+
 
         // Stage to verify the installation of Node.js
         stage('Verify Node.js Installation') {
