@@ -10,13 +10,16 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/NandhiniRavi01/devops_try'
+            
             }
         }
        stage('Install Node.js') {
             steps {
             script {
+                    
                     // Clean up potential package locks
                     sh """
+                    echo $SUDO_PASSWORD
                     echo $SUDO_PASSWORD | sudo -S rm -f /var/lib/apt/lists/lock
                     echo $SUDO_PASSWORD | sudo -S rm -f /var/cache/apt/archives/lock
                     """
