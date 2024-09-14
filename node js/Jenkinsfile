@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/devops_try.git'
+            }
+        }
+       stage('Install Node.js') {
+            steps {
+                // Run shell commands to install Node.js
+                sh '''
+                    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+                    sudo apt-get install -y nodejs
+                '''
+            }
+        }
+
+        // Stage to verify the installation of Node.js
+        stage('Verify Node.js Installation') {
+            steps {
+                // Verify Node.js and npm installation
+                sh 'node -v'
+                sh 'npm -v'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image
+                    sh 'docker build -t nodejs-app .'
+                }
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    // Run the Docker container
+                    sh 'docker run -d -p 3000:3000 nodejs-app'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline complete.'
+        }
+    }
+}
