@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/devops_try.git'
+                git 'https://github.com/NandhiniRavi01/devops_try.git'
             }
         }
        stage('Install Node.js') {
