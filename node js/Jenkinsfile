@@ -15,12 +15,24 @@ pipeline {
        stage('Install Node.js') {
             steps {
             script {
-          // Using echo to pass the password to sudo via stdin
-          sh '''
-          echo $SUDO_PASSWORD | sudo -S curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-          sudo apt-get install -y nodejs
-          '''
-        }            }
+                    // Clean up potential package locks
+                    sh """
+                    echo $SUDO_PASSWORD | sudo -S rm -f /var/lib/apt/lists/lock
+                    echo $SUDO_PASSWORD | sudo -S rm -f /var/cache/apt/archives/lock
+                    """
+
+                    // Remove the conflicting package if it exists
+                    sh """
+                    echo $SUDO_PASSWORD | sudo -S apt-get remove -y libnode-dev
+                    """
+
+                    // Install Node.js 20.x
+                    sh """
+                    echo $SUDO_PASSWORD | sudo -S curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+                    echo $SUDO_PASSWORD | sudo -S apt-get install -y nodejs
+                    """
+                }            
+            }
         }
         
 
