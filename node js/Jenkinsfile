@@ -1,67 +1,56 @@
 pipeline {
     agent any
     environment {
-        SUDO_PASSWORD = credentials('sudo-credentials')  // Replace 'sudo-password-id' with your Jenkins credential ID
+        SUDO_PASSWORD = credentials('sudo-credentials')  // Replace 'sudo-credentials' with your Jenkins credential ID
     }
-    
-   
-        
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/NandhiniRavi01/devops_try'
-            
+                checkout([$class: 'GitSCM', 
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/NandhiniRavi01/devops_try', 
+                                         credentialsId: 'git-credential']]  // Replace with Git credentials ID
+                ])
             }
         }
+
         stage('Use sudo') {
             steps {
-                withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASSWORD')]) {
+                withCredentials([string(credentialsId: 'sudo-credentials', variable: 'SUDO_PASSWORD')]) {
                     sh '''
-                        echo $SUDO_PASSWORD | sudo -S your_command
+                        echo $SUDO_PASSWORD | sudo -S whoami  # Test sudo access
                     '''
                 }
             }
         }
-       stage('Install Node.js') {
+
+        stage('Install Node.js') {
             steps {
-            script {
-                    
-                    // Clean up potential package locks
-                    sh """
-                    echo $SUDO_PASSWORD
-                    sudo -S rm -f /var/lib/apt/lists/lock
-                    sudo -S rm -f /var/cache/apt/archives/lock
-                    """
+                withCredentials([string(credentialsId: 'sudo-credentials', variable: 'SUDO_PASSWORD')]) {
+                    sh '''
+                        echo $SUDO_PASSWORD | sudo -S rm -f /var/lib/apt/lists/lock
+                        echo $SUDO_PASSWORD | sudo -S rm -f /var/cache/apt/archives/lock
 
-                    // Remove the conflicting package if it exists
-                    sh """
-                    sudo -S apt-get remove -y libnode-dev
-                    """
+                        echo $SUDO_PASSWORD | sudo -S apt-get remove -y libnode-dev
 
-                    // Install Node.js 20.x
-                    sh """
-                    sudo -S curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-                    sudo -S apt-get install -y nodejs
-                    """
-                }            
+                        echo $SUDO_PASSWORD | sudo -S curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+                        echo $SUDO_PASSWORD | sudo -S apt-get install -y nodejs
+                    '''
+                }
             }
         }
-        
 
-
-        // Stage to verify the installation of Node.js
         stage('Verify Node.js Installation') {
             steps {
-                // Verify Node.js and npm installation
-                sudo 'node -v'
-                sudo 'npm -v'
+                sh 'node -v'
+                sh 'npm -v'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
                     sh 'docker build -t nodejs-app .'
                 }
             }
@@ -70,7 +59,6 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    // Run the Docker container
                     sh 'docker run -d -p 3000:3000 nodejs-app'
                 }
             }
