@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/NandhiniRavi01/devops_try.git'
+                git branch: 'main', url: 'https://github.com/NandhiniRavi01/devops_try'
             }
         }
        stage('Install Node.js') {
