@@ -13,6 +13,15 @@ pipeline {
             
             }
         }
+        stage('Use sudo') {
+            steps {
+                withCredentials([string(credentialsId: 'SUDO_PASSWORD', variable: 'SUDO_PASSWORD')]) {
+                    sh '''
+                        echo $SUDO_PASSWORD | sudo -S your_command
+                    '''
+                }
+            }
+        }
        stage('Install Node.js') {
             steps {
             script {
