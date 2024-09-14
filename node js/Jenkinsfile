@@ -16,41 +16,7 @@ pipeline {
         }
 
        
-            stage('Use sudo') {
-    steps {
-        withCredentials([string(credentialsId: 'sudo-credentials', variable: 'SUDO_PASSWORD')]) {
-            sh '''
-                echo "$SUDO_PASSWORD" | sudo -S whoami
-            '''
-        }
-    }
-}
-
             
-        
-
-        stage('Install Node.js') {
-            steps {
-                withCredentials([string(credentialsId: 'sudo-credentials', variable: 'SUDO_PASSWORD')]) {
-                    sh '''
-                        echo $SUDO_PASSWORD | sudo -S rm -f /var/lib/apt/lists/lock
-                        echo $SUDO_PASSWORD | sudo -S rm -f /var/cache/apt/archives/lock
-
-                        echo $SUDO_PASSWORD | sudo -S apt-get remove -y libnode-dev
-
-                        echo $SUDO_PASSWORD | sudo -S curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-                        echo $SUDO_PASSWORD | sudo -S apt-get install -y nodejs
-                    '''
-                }
-            }
-        }
-
-        stage('Verify Node.js Installation') {
-            steps {
-                sh 'node -v'
-                sh 'npm -v'
-            }
-        }
 
         stage('Build Docker Image') {
             steps {
