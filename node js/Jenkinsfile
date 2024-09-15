@@ -1,33 +1,72 @@
 pipeline {
     agent any
+
+    environment {
+        DOCKER_IMAGE = 'nodejs-app'
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/NandhiniRavi01/devops_try'
+                checkout scm
             }
         }
+
         stage('Install Node.js and npm') {
             steps {
-            script {
-            sh '''
-                if ! npm --version >/dev/null 2>&1; then
-                    sudo apt-get update
-                    curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-                    sudo apt-get install -y nodejs
-                fi
-            '''
-        }
-        }
-        }
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
+                script {
+                    // Install npm if it's not installed
+                    sh '''
+                        if ! npm --version >/dev/null 2>&1; then
+                            sudo apt-get update
+                            sudo apt-get install -y npm
+                        fi
+                    '''
+                }
             }
         }
-        stage('Run Application') {
+
+        stage('Test Node.js') {
             steps {
-                sh 'node index.js' // Update this line if the entry file is different
+                script {
+                    sh 'node --version'
+                    sh 'npm --version'
+                }
             }
+        }
+
+        stage('Run app.js') {
+            steps {
+                script {
+                    // Test app.js locally before Docker build
+                    sh 'node index.js'
+                }
+            }
+        }
+
+        stage('Check Docker Installation') {
+            steps {
+                sh 'docker --version'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $DOCKER_IMAGE .'
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                sh 'docker run -d --name $DOCKER_IMAGE -p 3000:3000 $DOCKER_IMAGE'
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker stop $DOCKER_IMAGE || true'
+            sh 'docker rm $DOCKER_IMAGE || true'
         }
     }
 }
