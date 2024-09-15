@@ -8,8 +8,16 @@ pipeline {
         }
         stage('Install Node.js and npm') {
             steps {
-                sh 'nvm install 18 && nvm use 18'
-            }
+            script {
+            sh '''
+                if ! npm --version >/dev/null 2>&1; then
+                    sudo apt-get update
+                    curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+                    sudo apt-get install -y nodejs
+                fi
+            '''
+        }
+        }
         }
         stage('Install Dependencies') {
             steps {
