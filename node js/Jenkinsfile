@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/NandhiniRavi01/devops_try'
+                git branch: 'main', url: 'https://github.com/NandhiniRavi01/devops_try'
             }
         }
         stage('Install Node.js and npm') {
