@@ -2,51 +2,52 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'nodejs-app'
+        DOCKER_IMAGE = 'nodejs-app'  // Name of the Docker image
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
+                // Check out your code from the Git repository
                 checkout scm
             }
         }
 
-        stage('Install Node.js and npm') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    // Install npm if it's not installed
-                   script {
-            sh '''
-                if ! npm --version >/dev/null 2>&1; then
-                    sudo apt-get update
-                    curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-                    sudo apt-get install -y nodejs
-                fi
-            '''
-        }
+                    // Build the Docker image from the Dockerfile in the root of the repository
+                    sh 'docker build -t $DOCKER_IMAGE .'
                 }
             }
         }
 
-        stage('Test Node.js') {
+        stage('Run Docker Container') {
             steps {
                 script {
-                    sh 'node --version'
-                    sh 'npm --version'
+                    // Run the Docker container with the app.js file as the entry point
+                    sh 'docker run -d --name $DOCKER_IMAGE -p 3000:3000 $DOCKER_IMAGE'
                 }
             }
         }
 
-        stage('Run app.js') {
+        stage('Test Node.js App') {
             steps {
                 script {
-                    // Test app.js locally before Docker build
-                    sh 'node app.js'
+                    // You can use curl or other methods to check if the app is running correctly
+                    sh 'curl http://localhost:3000'
                 }
             }
         }
+    }
 
-        
-}
+    post {
+        always {
+            // Stop and remove the Docker container after the build
+            script {
+                sh 'docker stop $DOCKER_IMAGE || true'
+                sh 'docker rm $DOCKER_IMAGE || true'
+            }
+        }
+    }
 }
