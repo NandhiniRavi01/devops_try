@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 3000
 
 # Run the app.js file
-CMD [ "node", "app.js" ]
+CMD [ "node", "index.js" ]
