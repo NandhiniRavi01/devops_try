@@ -1,72 +1,25 @@
 pipeline {
     agent any
-
-    environment {
-        DOCKER_IMAGE = 'nodejs-app'
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git 'https://github.com/NandhiniRavi01/devops_try'
             }
         }
-
         stage('Install Node.js and npm') {
             steps {
-                script {
-                    // Install npm if it's not installed
-                    sh '''
-                        if ! npm --version >/dev/null 2>&1; then
-                            sudo apt-get update
-                            sudo apt-get install -y npm
-                        fi
-                    '''
-                }
+                sh 'nvm install 18 && nvm use 18'
             }
         }
-
-        stage('Test Node.js') {
+        stage('Install Dependencies') {
             steps {
-                script {
-                    sh 'node --version'
-                    sh 'npm --version'
-                }
+                sh 'npm install'
             }
         }
-
-        stage('Run app.js') {
+        stage('Run Application') {
             steps {
-                script {
-                    // Test app.js locally before Docker build
-                    sh 'node index.js'
-                }
+                sh 'node index.js' // Update this line if the entry file is different
             }
-        }
-
-        stage('Check Docker Installation') {
-            steps {
-                sh 'docker --version'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t $DOCKER_IMAGE .'
-            }
-        }
-
-        stage('Run Docker Container') {
-            steps {
-                sh 'docker run -d --name $DOCKER_IMAGE -p 3000:3000 $DOCKER_IMAGE'
-            }
-        }
-    }
-
-    post {
-        always {
-            sh 'docker stop $DOCKER_IMAGE || true'
-            sh 'docker rm $DOCKER_IMAGE || true'
         }
     }
 }
