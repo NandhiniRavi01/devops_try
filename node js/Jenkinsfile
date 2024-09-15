@@ -16,12 +16,15 @@ pipeline {
             steps {
                 script {
                     // Install npm if it's not installed
-                    sh '''
-                        if ! npm --version >/dev/null 2>&1; then
-                            sudo apt-get update
-                            sudo apt-get install -y npm
-                        fi
-                    '''
+                   script {
+            sh '''
+                if ! npm --version >/dev/null 2>&1; then
+                    sudo apt-get update
+                    curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+                    sudo apt-get install -y nodejs
+                fi
+            '''
+        }
                 }
             }
         }
