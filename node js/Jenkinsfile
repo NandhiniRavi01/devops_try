@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script {
                     // Test app.js locally before Docker build
-                    sh 'npm start app.js'
+                    sh 'node .'
                 }
             }
         }
