@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'nodejs-app' }
+    }
 
     stages {
         stage('Checkout') {
@@ -7,31 +9,17 @@ pipeline {
                 checkout([$class: 'GitSCM', 
                     branches: [[name: '*/main']],
                     userRemoteConfigs: [[url: 'https://github.com/NandhiniRavi01/devops_try', 
-                                         credentialsId: 'git-credential']]  // Replace with Git credentials ID
+                                         credentialsId: 'git-credential']]
                 ])
             }
         }
-        stage('Install Node.js') {
+
+        stage('Test Node.js') {
             steps {
-                // Run shell commands to install Node.js
-                sh '''
-                    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-                    sudo apt-get install -y nodejs
-                '''
+                sh 'node --version' 
+                sh 'npm --version'
             }
         }
-
-        // Stage to verify the installation of Node.js
-        stage('Verify Node.js Installation') {
-            steps {
-                // Verify Node.js and npm installation
-                sh 'node -v'
-                sh 'npm -v'
-            }
-        }
-
-       
-            
 
         stage('Build Docker Image') {
             steps {
@@ -45,6 +33,15 @@ pipeline {
             steps {
                 script {
                     sh 'docker run -d -p 3000:3000 nodejs-app'
+                }
+            }
+        }
+
+        stage('Run app.js') {
+            steps {
+                script {
+                    // Run the Node.js app.js file inside the container
+                    sh 'docker exec $(docker ps -q --filter ancestor=nodejs-app) node app.js'
                 }
             }
         }
