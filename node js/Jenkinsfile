@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'node:16' }
+    }
 
     stages {
         stage('Checkout') {
@@ -14,15 +16,12 @@ pipeline {
 
         stage('Test Node.js') {
             steps {
-                sh 'node --version'
+                sh 'node --version' 
                 sh 'npm --version'
             }
         }
 
         stage('Build Docker Image') {
-            agent {
-                docker { image 'docker:20.10.7' }  // Docker image with Docker installed
-            }
             steps {
                 script {
                     sh 'docker build -t nodejs-app .'
