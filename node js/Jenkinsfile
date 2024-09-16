@@ -14,7 +14,7 @@ pipeline {
                 script {
                     def app = docker.image('my-node-app')
                     app.withRun('-p 3000:3000') { c ->
-                        sh 'node index.js'
+                        sh 'docker exec ${c.id} node index.js'
                     }
                 }
             }
