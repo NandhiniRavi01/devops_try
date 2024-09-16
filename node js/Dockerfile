@@ -1,18 +1,20 @@
-# Dockerfile
-FROM node:12
+# Use a base image that has both Python and Node.js, or install Node.js manually
+FROM python:3.9-slim
 
-# Create app directory
-WORKDIR /usr/src/app
+# Set the working directory
+WORKDIR /app
 
-# Copy package.json and install dependencies
-COPY package*.json ./
-RUN npm install
+# Install Node.js
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
 
-# Bundle app source
+# Copy the application code
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 3000
+# Expose the port for the application
+EXPOSE 5000
 
-# Run the app.js file
-CMD [ "node", "index.js" ]
+# Command to run the application
+CMD ["node", "index.js"]
