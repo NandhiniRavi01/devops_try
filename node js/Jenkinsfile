@@ -55,7 +55,7 @@ pipeline {
         stage('Run Application') {
             steps {
                 // Run your Node.js app
-                sh 'node src/index.js'
+                sh 'node index.js'
             }
         }
     }
