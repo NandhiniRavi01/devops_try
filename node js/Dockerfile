@@ -2,7 +2,7 @@
 FROM node:18-slim
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /node
 
 # Copy package.json and package-lock.json (if present)
 COPY package*.json ./
