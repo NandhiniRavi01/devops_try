@@ -2,50 +2,23 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone Repository') {
-            steps {
-                // Checkout the code from your GitHub repository
-                git branch: 'main', url: 'https://github.com/NandhiniRavi01/devops_try.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build Docker image using the Dockerfile in the repository
-                    docker.build('my-node-app', '.')
+                    docker.build('my-react-app')
                 }
             }
         }
-
         stage('Run Docker Container') {
             steps {
                 script {
-                    // Run the Docker container
-                    docker.image('my-node-app').inside {
-                        // Ensure the container runs using index.js
-                        sh 'npm install'
-                        sh 'npm start' 
+                    def app = docker.image('my-react-app')
+                    app.withRun('-p 3000:3000') { c ->
+                        echo "Container is running. Checking logs..."
+                        sh "docker logs ${c.id}"
                     }
                 }
             }
-        }
-
-        stage('Clean Up') {
-            steps {
-                script {
-                    // Optionally stop and remove Docker container and images
-                    sh 'docker container prune -f'
-                    sh 'docker image prune -f'
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            // Cleanup workspace after the build
-            cleanWs()
         }
     }
 }
