@@ -1,16 +1,19 @@
-# Use a base image with Node.js
+# Use an official Node.js runtime as a parent image
 FROM node:18-slim
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the application code
-COPY . .
+# Copy package.json and package-lock.json (if present)
+COPY package*.json ./
 
-# Install Node.js dependencies (if you have a package.json)
+# Install dependencies
 RUN npm install
 
-# Expose the port for the application
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port the app runs on
 EXPOSE 3000
 
 # Command to run the application
