@@ -1,5 +1,5 @@
 # Use a base image that has both Python and Node.js, or install Node.js manually
-FROM python:3.9-slim
+FROM node:18
 
 # Set the working directory
 WORKDIR /app
