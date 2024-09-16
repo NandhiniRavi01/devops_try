@@ -1,26 +1,15 @@
 pipeline {
     agent any
+
     tools {
-        nodejs : "nodejs"
+        nodejs 'nodejs' // Make sure 'nodejs' matches the name of the Node.js tool you configured in Jenkins
     }
 
     stages {
-        stage('Install Node.js') {
+        stage('Checkout') {
             steps {
-                script {
-                    // Remove conflicting packages
-                    sh '''
-                    sudo apt-get remove --purge -y nodejs libnode-dev
-                    sudo apt-get autoremove -y
-                    sudo apt-get clean
-                    '''
-
-                    // Install Node.js 18.x
-                    sh '''
-                    curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-                    sudo apt-get install -y nodejs
-                    '''
-                }
+                // Clone your repository or checkout code
+                checkout scm
             }
         }
 
@@ -30,6 +19,15 @@ pipeline {
                 sh 'npm install'
             }
         }
+
+        stage('Build') {
+            steps {
+                // Build your React.js application
+                sh 'npm run build'
+            }
+        }
+
+    
 
         stage('Run Application') {
             steps {
