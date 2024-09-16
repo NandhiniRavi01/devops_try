@@ -5,7 +5,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build('my-node-app')
+                    docker.build('my-node-app', '.')
                 }
             }
         }
@@ -14,9 +14,8 @@ pipeline {
                 script {
                     def app = docker.image('my-node-app')
                     app.withRun('-p 3000:3000') { c ->
-                        // Directly run the application inside the container
                         echo "Container is running. Checking logs..."
-                        sh "docker logs ${c.id}" // Check logs to see if the application is running
+                        sh "docker logs ${c.id}"
                     }
                 }
             }
