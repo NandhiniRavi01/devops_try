@@ -2,23 +2,33 @@ pipeline {
     agent any
 
     stages {
-        stage('Build Docker Image') {
+        stage('Install Node.js') {
             steps {
-                script {
-                    docker.build('my-node-app', '.')
-                }
+                // Install Node.js (you can use a specific version if needed)
+                sh 'curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -'
+                sh 'sudo apt-get install -y nodejs'
             }
         }
-        stage('Run Docker Container') {
+
+        stage('Install Dependencies') {
             steps {
-                script {
-                    def app = docker.image('my-node-app')
-                    app.withRun('-p 3000:3000') { c ->
-                        echo "Container is running. Checking logs..."
-                        sh "docker logs ${c.id}"
-                    }
-                }
+                // Navigate to the project directory and install dependencies
+                sh 'npm install'
             }
+        }
+
+        stage('Run Application') {
+            steps {
+                // Run the application using Node.js
+                sh 'node index.js'
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up after the build, e.g., remove node_modules
+            sh 'rm -rf node_modules'
         }
     }
 }
