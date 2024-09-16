@@ -14,7 +14,9 @@ pipeline {
                 script {
                     def app = docker.image('my-node-app')
                     app.withRun('-p 3000:3000') { c ->
-                        sh 'docker exec ${c.id} node index.js'
+                        // Directly run the application inside the container
+                        echo "Container is running. Checking logs..."
+                        sh "docker logs ${c.id}" // Check logs to see if the application is running
                     }
                 }
             }
