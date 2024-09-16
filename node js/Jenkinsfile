@@ -17,6 +17,7 @@ pipeline {
                 }
             }
         }
+        
 
         stage('Run Docker Container') {
             steps {
@@ -24,6 +25,7 @@ pipeline {
                     // Run the Docker container
                     docker.image('my-node-app').inside {
                         // Ensure the container runs using index.js
+                        sh 'node install'
                         sh 'node index.js' 
                     }
                 }
