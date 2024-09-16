@@ -21,24 +21,14 @@ pipeline {
                 script {
                     def app = docker.image('my-node-app')
                     app.withRun('-p 3000:3000') { c ->
+                        sh 'node install'
                         sh 'node index.js'
                     }
                 }
             }
         }
 
-        stage('Run Docker Container') {
-            steps {
-                script {
-                    // Run the Docker container
-                    docker.image('my-node-app').inside {
-                        // Ensure the container runs using index.js
-                        sh 'node install'
-                        sh 'node index.js' 
-                    }
-                }
-            }
-        }
+        
 
         stage('Clean Up') {
             steps {
