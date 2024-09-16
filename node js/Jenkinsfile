@@ -21,7 +21,7 @@ pipeline {
                 script {
                     def app = docker.image('my-node-app')
                     app.withRun('-p 3000:3000') { c ->
-                        sh 'node install'
+                        
                         sh 'node index.js'
                     }
                 }
