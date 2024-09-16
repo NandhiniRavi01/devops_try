@@ -1,28 +1,24 @@
-FROM node:20
+# Use an official Node.js runtime as a parent image
+FROM node:18
 
-# Create app directory
-WORKDIR /usr/src/app
+# Set the working directory in the container
+WORKDIR /react
 
-# Fix permissions for npm cache
-RUN mkdir -p /usr/src/app/.npm-cache && \
-    chown -R node:node /usr/src/app/.npm-cache
-
-# Set npm cache directory to avoid permission issues
-RUN npm config set cache /usr/src/app/.npm-cache --global
-
-
-
-# Copy package.json and package-lock.json (if available)
-COPY --chown=node:node package*.json ./
+# Copy the package.json and package-lock.json to the container
+COPY package.json package-lock.json ./
 
 # Install dependencies
 RUN npm install
 
-# Bundle app source
-COPY --chown=node:node . .
+# Copy the rest of the application code
+COPY . .
 
-# Expose the port the app runs on
+# Build the React app
+RUN npm run build
+
+# Expose the port your app runs on (usually 3000 for React)
 EXPOSE 3000
 
-# Run the app
-CMD [ "npm", "start" ]
+# Serve the app using a simple web server like serve
+RUN npm install -g serve
+CMD ["serve", "-s", "build"]
