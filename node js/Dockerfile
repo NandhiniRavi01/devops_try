@@ -1,20 +1,17 @@
-# Use a base image that has both Python and Node.js, or install Node.js manually
-FROM node:18
+# Use a base image with Node.js
+FROM node:18-slim
 
 # Set the working directory
 WORKDIR /app
 
-# Install Node.js
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs
-
 # Copy the application code
 COPY . .
 
+# Install Node.js dependencies (if you have a package.json)
+RUN npm install
+
 # Expose the port for the application
-EXPOSE 5000
+EXPOSE 3000
 
 # Command to run the application
 CMD ["node", "index.js"]
