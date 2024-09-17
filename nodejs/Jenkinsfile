@@ -54,7 +54,7 @@ pipeline {
     }
     post {
         always {
-            // Cleanup node_modules after running
+            // Cleanup node_modules after running e
             sh 'rm -rf node_modules'
         }
     }
