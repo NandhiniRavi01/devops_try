@@ -15,7 +15,8 @@ pipeline {
         stage('Check Files') {
             steps {
                 // List files to ensure package.json is present
-                sh 'ls -la /var/lib/jenkins/workspace/nodejs_work/"node js"'
+                sh 'ls -la /var/lib/jenkins/workspace/nodejs_work/node\ js'
+'
             }
         }
 
