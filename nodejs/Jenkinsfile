@@ -47,12 +47,11 @@ pipeline {
 
         stage('Run Application') {
             steps {
-                // Run your Node.js app
-                sh 'node index.js'
+                // Run the Node.js application
+                sh 'node nodejs/index.js'
             }
         }
     }
-
     post {
         always {
             // Cleanup node_modules after running
