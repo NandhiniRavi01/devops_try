@@ -45,12 +45,7 @@ pipeline {
             }
         }
 
-        stage('Build Application') {
-            steps {
-                // Run build script defined in package.json
-                sh 'npm run build'
-            }
-        }
+        
 
         stage('Run Application') {
             steps {
