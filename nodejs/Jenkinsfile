@@ -1,22 +1,21 @@
 pipeline {
     agent any
-    tools{
-     nodejs 'nodejs'
+    tools {
+        nodejs 'nodejs'
     }
 
     stages {
         stage('Checkout Code') {
             steps {
                 // Checkout code from the repository
-               git url:'https://github.com/NandhiniRavi01/devops_try',branch:'main'
+                git url: 'https://github.com/NandhiniRavi01/devops_try', branch: 'main'
             }
         }
 
         stage('Check Files') {
             steps {
                 // List files to ensure package.json is present
-                sh 'ls -la /var/lib/jenkins/workspace/nodejs_work/nodejs'
-'
+                sh 'ls -la'
             }
         }
 
@@ -45,8 +44,6 @@ pipeline {
                 sh 'npm install'
             }
         }
-
-        
 
         stage('Run Application') {
             steps {
